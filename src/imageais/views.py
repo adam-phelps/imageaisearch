@@ -1,6 +1,6 @@
 # IAIS Views
 # Adam Phelps 1/18/21
-
+import logging
 from django.http import HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
@@ -26,6 +26,7 @@ def display_img_search(request, id):
         emotions = "UNKNOWN"
     img = UploadedImage.objects.get(id=id)
     img_location = img.image.name
+    logging.info(f"Getting image location: {img_location}")
     return render(request, "imageais/result.html", {"json_response": json_response,
                                                     "multiple_faces": multiple_faces, 
                                                     "img_location": img_location,
