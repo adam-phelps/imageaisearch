@@ -10,6 +10,8 @@ from django.conf import settings
 
 logging.basicConfig(level=logging.INFO, format=' %(asctime)s - %(levelname)s - %(message)s')
 logging.debug('Test logging')
+sts = boto3.client("sts")
+deploy_region = sts.meta.region_name
 
 def process_image_json(id):
     try:
@@ -42,7 +44,7 @@ def process_image(id):
 
 def aws_rek_detect_faces(img_filename, img_id, s3bucket=False):
     if s3bucket == False:
-        client = boto3.client('rekognition')
+        client = boto3.client('rekognition', region_name=deploy_region)
         output_file = str(img_id)+'.json'
         with open(img_filename, 'rb') as img:
             response = client.detect_faces(Image={'Bytes': img.read()}, Attributes=['ALL'])
