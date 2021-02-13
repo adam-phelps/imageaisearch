@@ -17,9 +17,9 @@ class IaisInfraMonitorStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
         # Must manually update the https:// url in this file before launching stack.
-        canary = synthetics.Canary(self, "HTTP-Canary",
+        canary = synthetics.Canary(self, "HTTPS-Canary",
             schedule=synthetics.Schedule.rate(core.Duration.minutes(10)),
-            canary_name="iais-http-public-test",
+            canary_name="iais-https",
             test=synthetics.Test.custom(
                 code=synthetics.Code.from_asset(os.path.join(os.path.dirname(os.path.abspath(__file__)),"canary")),
                 handler="index.handler"
