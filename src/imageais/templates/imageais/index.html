@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image AI Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container-fluid" align="center">
+        <img src="{% static 'imageais/Image_AI_Search_Logo.png' %}">
+        <br>
+        <h3 style="text-align:center">Upload your image below!</h3>
+        <form method = "post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form_image_upload.as_p }}
+            <button type="submit" class="btn btn-primary"> Upload </button>
+        </form>
+    </div>
+</body>
+</html>

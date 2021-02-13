@@ -1,0 +1,11 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/iais/imageaisearch/src
+ExecStart=/opt/iais/imageaisearch/src/systemd/iais_systemd_gunicorn_service.sh
+
+[Install]
+WantedBy=multi-user.target
