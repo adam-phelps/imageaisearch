@@ -147,6 +147,6 @@ MEDIA_URL = '/media/'
 if DEBUG == True:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 else:
-    MEDIA_ROOT = '/var/www/imageis/media'
+    MEDIA_ROOT = '/var/www/imageais/media/'
 
 #Logging
