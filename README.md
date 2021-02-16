@@ -6,14 +6,14 @@ Upload an image and explore related products to enhance your lifestyle. Image AI
 ## Systems Architecture
 
 Image AI Search is developed using the following key technologies:
-Infrastructure: AWS - EC2, S3, CloudFormation, CDK, SSM, Secrets Manager, Route 53, ELB/NLB, IAM, VPC
-Web Server: NGINX
-App Server: Django
-Database: MariaDB
-Security: IAM
-Development: Docker
-CI/CD: CDK/Bash
-Primary Languages: Python, Javascript
+* Infrastructure: AWS - EC2, S3, CloudFormation, CDK, SSM, Secrets Manager, Route 53, ELB/NLB, IAM, VPC
+* Web Server: NGINX
+* App Server: Django
+* Database: MariaDB
+* Security: IAM
+* Development: Docker
+* CI/CD: CDK/Bash
+* Primary Languages: Python, Javascript
 
 ## Development
 
