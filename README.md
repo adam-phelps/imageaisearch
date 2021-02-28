@@ -3,6 +3,10 @@
 
 Upload an image and explore related products to enhance your lifestyle. Image AI Search allows you to run multiple analysis on an image to detect objects and their attributes. Determine age and number of people in an image or detect objects in an image.  Save your images and analysis for easy future retrieval. 
 
+## User Interface
+![Index](Image_AI_Search_Index.PNG?raw=true "Image AI Search - Index")
+![Example_result](Image_AI_Search_example_result.PNG?raw=true "Image AI Search - Example Result")
+
 ## Systems Architecture
 
 Image AI Search is developed using the following key technologies:
