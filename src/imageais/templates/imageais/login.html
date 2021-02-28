@@ -1,0 +1,28 @@
+{% extends "imageais/layout.html" %}
+
+{% block body %}
+{% if notification %}
+<div class="alert alert-danger" role="alert">
+    {{ notification }}  
+</div>
+{% endif %}
+<br>
+<div class="container">
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" type="text" name="username" placeholder="username">
+        </div>
+        <br>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="password">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    Need to register? <a href="{% url 'register' %}">Click here!</a>
+</div>
+
+
+
+{% endblock %}

@@ -1,38 +1,27 @@
+{% extends "imageais/layout.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Processed</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-<body>
-    <div class="container-fluid" align="center">
-        <img src="{% static 'imageais/Image_AI_Search_Logo.png' %}">
+{% block body %}
+<div class="container-fluid" align="center">
+    <img src="{% static 'imageais/Image_AI_Search_Logo.png' %}">
+    <br>
+    We took a good look at this image you sent us, and discovered....
+    <br>
+    <img src="/media/{{img_location}}" style="max-width: 300px;width:100%"/>
+    <br>
+    {% if json_response.FaceDetails.0.AgeRange.Low is not None %}
+    <h2>About the Star of the Image</h2>
+        Age is likely <b>{{age}}</b> <i>Range is between {{json_response.FaceDetails.0.AgeRange.Low}} and {{json_response.FaceDetails.0.AgeRange.High}}</i><br>
+        This person is likely a <b>{{json_response.FaceDetails.0.Gender.Value}}</b> and we guess that is <b>{{json_response.FaceDetails.0.Gender.Confidence}}%</b> true. <br>
+        I am guessing this person's top emotion is <b>{{top_emotion}}</b> followed by <b>{{second_emotion}}</b>.
         <br>
-        We took a good look at this image you sent us, and discovered....
-        <br>
-        <img src="/media/{{img_location}}" style="max-width: 300px;width:100%"/>
-        <br>
-        {% if json_response.FaceDetails.0.AgeRange.Low is not None %}
-        <h2>About the Star of the Image</h2>
-            Age is likely <b>{{age}}</b> <i>Range is between {{json_response.FaceDetails.0.AgeRange.Low}} and {{json_response.FaceDetails.0.AgeRange.High}}</i><br>
-            This person is likely a <b>{{json_response.FaceDetails.0.Gender.Value}}</b> and we guess that is <b>{{json_response.FaceDetails.0.Gender.Confidence}}%</b> true. <br>
-            I am guessing this person's top emotion is <b>{{top_emotion}}</b> followed by <b>{{second_emotion}}</b>.
-            <br>
-            {% if multiple_faces == True %}
-            <i>Multiple faces detected. Only showing results for one face.</i>
-            {% endif %}
-        {% else %}
-            No person detected.
+        {% if multiple_faces == True %}
+        <i>Multiple faces detected. Only showing results for one face.</i>
         {% endif %}
-        <!--{% for item in json_response %}
-            {{item}} <br>
-        {% endfor %}-->
-        <br>
-        <a href="/">Return to Home</a>
-    </div>
-</body>
-</html>
+    {% else %}
+        No person detected.
+    {% endif %}
+    <br>
+    <a href="/">Return to Home</a>
+</div>
+{% endblock %}

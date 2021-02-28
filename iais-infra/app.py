@@ -8,11 +8,28 @@ from aws_cdk import (
 )
 
 from iais_infra.iais_infra_stack import IaisInfraStack
+from iais_infra.iais_infra_stack_bootstrap import IaisInfraStackBootstrap
 from iais_infra.iais_infra_mon_stack import IaisInfraMonitorStack
+from iais_infra.iais_infra_stack_db import IaisInfraStackDb
 
 
-app = core.App()
-IaisInfraStack(app, "iais-infra")
-#IaisInfraMonitorStack(app, "iais-infra-mon")
+App = core.App()
+BootstrapStack = IaisInfraStackBootstrap = IaisInfraStackBootstrap(
+    App,
+    "iais-bootstrap")
 
-app.synth()
+CoreStack = IaisInfraStack(
+    App,
+    "iais-infra",
+    pub_hosted_zone=BootstrapStack.pub_hosted_zone
+    )
+
+'''DbStack = IaisInfraStackDb(
+    App, 
+    "iais-infra-rds-db",
+    main_vpc=CoreStack.vpc,
+    main_sg=CoreStack.sg)'''
+
+#IaisInfraMonitorStack(App, "iais-infra-mon")
+
+App.synth()

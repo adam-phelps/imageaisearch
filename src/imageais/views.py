@@ -3,8 +3,11 @@
 import logging
 from django.http import HttpResponseRedirect
 from django.http.response import JsonResponse
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .forms import FormImageUpload
+from django.urls import reverse
+from .forms import FormImageUpload, UserCreationFormHidden
 from .models import UploadedImage
 from .utils import process_image,process_image_json,process_image_emotion
 
@@ -33,6 +36,40 @@ def display_img_search(request, id):
                                                     "top_emotion": emotions[0],
                                                     "second_emotion": emotions[1],
                                                     "age": age})
+
+def register_view(request):
+    if request.method == "POST":
+        registerform = UserCreationFormHidden(request.POST)
+        if registerform.is_valid():
+            user = registerform.save()
+            username = registerform.cleaned_data.get("username")
+            password = registerform.cleaned_data.get("password1")
+            login(request, user)
+            return redirect('index')
+    else:
+        registerform = UserCreationFormHidden()
+    return render(request, 'imageais/register.html', { 'registerform':registerform })
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "imageais/login.html", {
+                "notification": "Username/password invalid."
+            })
+    else:
+        return render(request, "imageais/login.html")
+
+def logout_view(request):
+    if request.method == "GET":
+        logout(request)
+        return HttpResponseRedirect(reverse("index"))
 
 def index(request):
     if request.method == 'POST':

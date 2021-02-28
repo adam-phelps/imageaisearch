@@ -14,8 +14,10 @@ from aws_cdk import (
 
 
 class IaisInfraStack(core.Stack):
+
     
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+    def __init__(self, scope: core.Construct, id: str, pub_hosted_zone: object, **kwargs) -> None:
+
         super().__init__(scope, id, **kwargs)
 
         sts = boto3.client("sts")
@@ -25,19 +27,27 @@ class IaisInfraStack(core.Stack):
         #TODO ADD an ASG
         vpc = ec2.Vpc(self, "iais-public",
             nat_gateways=0,
-            subnet_configuration=[ec2.SubnetConfiguration(
+            subnet_configuration=[
+                ec2.SubnetConfiguration(
                 name="public",
-                subnet_type=ec2.SubnetType.PUBLIC)])
+                subnet_type=ec2.SubnetType.PUBLIC),
+                ec2.SubnetConfiguration(
+                name="private",
+                subnet_type=ec2.SubnetType.ISOLATED),
+                ])
 
         sg = ec2.SecurityGroup(self, f"iais-sg-{str}",
             vpc=vpc,
             allow_all_outbound=True,
             description="For HTTPS access.")
-        
+
         sg.add_ingress_rule(
             peer=ec2.Peer.any_ipv4(),
             connection=ec2.Port.tcp(443)
         )
+
+        self.sg = sg
+        self.vpc = vpc
 
         instance_ami = ec2.MachineImage.latest_amazon_linux(
             generation=ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
@@ -83,10 +93,6 @@ class IaisInfraStack(core.Stack):
         lb_listener = lb.add_listener(f"iais-listener-{str}",
             port=443,
             default_target_groups=[lb_tg])
-
-        pub_hosted_zone = r53.PublicHostedZone(self, f"iais-pubHostedZone",
-            zone_name="imageaisearch.com",
-            comment="Managed in Google Domains. Redirecting Google domain servers here")
 
         r53.ARecord(self, "AliasRecord",
             zone=pub_hosted_zone,

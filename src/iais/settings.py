@@ -37,7 +37,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'debug.log',
         },
@@ -45,7 +45,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },
@@ -95,13 +95,13 @@ WSGI_APPLICATION = 'iais.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+DATABASE_ENDPOINT = os.getenv('DJANGO_DB_CONFIG_FILE')
+
 DATABASES = {
     'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
          'ENGINE': 'django.db.backends.mysql',
          'OPTIONS': {
-             'read_default_file': '**REMOVED**imageaisearch/src/iais/iais_db_engine.cnf'
+             'read_default_file': DATABASE_ENDPOINT
          }
     }
 }
