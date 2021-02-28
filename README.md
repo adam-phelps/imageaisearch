@@ -1,7 +1,7 @@
 # Image AI Search
 ![Logo](Image_AI_Search_Logo.png?raw=true "Image AI Search")
 
-Upload an image and explore related products to enhance your lifestyle. Image AI Search allows you to run multiple analysis on an image to detect objects and their attributes. Determine age and number of people in an image or detect objects in an image.  Save your images and analysis for easy future retrieval. 
+Upload an image and explore hidden insights. Image AI Search allows you to run multiple analysis on an image to detect objects and their attributes. Determine age and number of people in an image or detect objects in an image.  Save your images and analysis for easy future retrieval. 
 
 ## User Interface
 <img src="https://raw.githubusercontent.com/adam-phelps/imageaisearch/main/Image_AI_Search_example_result.PNG" width="300">
