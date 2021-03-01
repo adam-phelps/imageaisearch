@@ -4,11 +4,13 @@ import logging
 from django.http import HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.core.paginator import Paginator
 from .forms import FormImageUpload, UserCreationFormHidden
-from .models import UploadedImage
+from .models import UploadedImage,User
 from .utils import process_image,process_image_json,process_image_emotion
 
 def display_img_search(request, id):
@@ -37,6 +39,7 @@ def display_img_search(request, id):
                                                     "second_emotion": emotions[1],
                                                     "age": age})
 
+
 def register_view(request):
     if request.method == "POST":
         registerform = UserCreationFormHidden(request.POST)
@@ -49,6 +52,7 @@ def register_view(request):
     else:
         registerform = UserCreationFormHidden()
     return render(request, 'imageais/register.html', { 'registerform':registerform })
+
 
 def login_view(request):
     if request.method == "POST":
@@ -66,16 +70,31 @@ def login_view(request):
     else:
         return render(request, "imageais/login.html")
 
+
 def logout_view(request):
     if request.method == "GET":
         logout(request)
         return HttpResponseRedirect(reverse("index"))
 
+
+@login_required
+def get_user_images(request):
+    if request.method == "GET":
+        images = UploadedImage.objects.all().order_by("-timestamp")
+        images_pag = Paginator(images, 10)
+        try:
+            page_obj = images_pag.page(request.GET['page'])
+        except:
+            page_obj = images_pag.page(1)
+    return render(request, "imageais/images.html", {'images_page_obj': page_obj} )
+
+
 def index(request):
     if request.method == 'POST':
         form = FormImageUpload(request.POST, request.FILES)
         if form.is_valid():
-            new_image = UploadedImage(image=request.FILES['file'])
+            new_image = UploadedImage(user=User.objects.get(username__contains=request.user),
+            image=request.FILES['file'])
             new_image.save()
             return redirect('displayimgsearch', id=new_image.id)
     else:
