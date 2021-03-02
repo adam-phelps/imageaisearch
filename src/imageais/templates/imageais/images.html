@@ -5,7 +5,6 @@
 <div class="container-fluid" align="center">
     <img src="{% static 'imageais/Image_AI_Search_Logo.png' %}">
     <h1> Your Images </h1>
-    
 </div>
 <div class="container-fluid" align="center">
     {% for image in images_page_obj %}
@@ -13,22 +12,20 @@
         <img src="/media/{{image.image}}" style="max-width: 300px;width:100%"/>
     <br>
     {% endfor %}
-        <div class="pagination">
-            <span class="step-links">
+    <nav aria-label="Pagination">
+        <ul class="pagination pagination-lg">
                 {% if images_page_obj.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    <li class="page-item"><a href="?page=1">&laquo; first</a></li>
+                    <li class="page-item"><a href="?page={{ images_page_obj.previous_page_number }}">previous</a></li>
                 {% endif %}
 
-                <span class="current">
-                    Page {{ images_page_obj.number }} of {{ images_page_obj.paginator.num_pages }}.
-                </span>
+                <li class="active">Page {{ images_page_obj.number }} of {{ images_page_obj.paginator.num_pages }} <li>
 
                 {% if images_page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">next</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    <li class="page-item"><a href="?page={{ images_page_obj.next_page_number }}">next</a></li>
+                    <li class="page-item"><a href="?page={{ images_page_obj.paginator.num_pages }}">last &raquo;</a></li>
                 {% endif %}
-            </span>
-        </div>
+        </ul>
+    </nav>
 </div>
 {% endblock %}
