@@ -10,20 +10,21 @@
     {% for image in images_page_obj %}
     <br>
         <img src="/media/{{image.image}}" style="max-width: 300px;width:100%"/>
+        <p> Uploaded on {{ image.timestamp }} </p>
     <br>
     {% endfor %}
     <nav aria-label="Pagination">
         <ul class="pagination pagination-lg">
                 {% if images_page_obj.has_previous %}
-                    <li class="page-item"><a href="?page=1">&laquo; first</a></li>
-                    <li class="page-item"><a href="?page={{ images_page_obj.previous_page_number }}">previous</a></li>
+                    <li class="page-item"><a href="?page=1">&laquo; First</a></li>
+                    <li class="page-item"><a href="?page={{ images_page_obj.previous_page_number }}">&nbsp; Previous </a></li>
                 {% endif %}
-
-                <li class="active">Page {{ images_page_obj.number }} of {{ images_page_obj.paginator.num_pages }} <li>
-
+                    <li class="active">Page {{ images_page_obj.number }} of {{ images_page_obj.paginator.num_pages }} &nbsp;<li>
+                    <br>
                 {% if images_page_obj.has_next %}
-                    <li class="page-item"><a href="?page={{ images_page_obj.next_page_number }}">next</a></li>
-                    <li class="page-item"><a href="?page={{ images_page_obj.paginator.num_pages }}">last &raquo;</a></li>
+                    <li class="page-item"><a href="?page={{ images_page_obj.next_page_number }}"> Next &nbsp;</a></li>
+                    
+                    <li class="page-item"><a href="?page={{ images_page_obj.paginator.num_pages }}">Last &raquo;</a></li>
                 {% endif %}
         </ul>
     </nav>
