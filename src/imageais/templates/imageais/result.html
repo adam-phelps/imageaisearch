@@ -9,11 +9,11 @@
     <br>
     <img src="/media/{{img_location}}" style="max-width: 300px;width:100%"/>
     <br>
-    {% if json_response.FaceDetails.0.AgeRange.Low is not None %}
+    {% if json_response.age_low is not None %}
     <h2>About the Star of the Image</h2>
-        Age is likely <b>{{age}}</b> <i>Range is between {{json_response.FaceDetails.0.AgeRange.Low}} and {{json_response.FaceDetails.0.AgeRange.High}}</i><br>
-        This person is likely a <b>{{json_response.FaceDetails.0.Gender.Value}}</b> and we guess that is <b>{{json_response.FaceDetails.0.Gender.Confidence}}%</b> true. <br>
-        I am guessing this person's top emotion is <b>{{top_emotion}}</b> followed by <b>{{second_emotion}}</b>.
+        Age is likely <b>{{age}}</b> <i>Range is between {{json_response.age_low}} and {{json_response.age_high}}</i><br>
+        This person is likely a <b>{{json_response.gender}}</b> and we guess that is <b>{{json_response.gender_confidence}}%</b> true. <br>
+        I am guessing this person's top emotion is <b>{{json_response.top_emotion}}</b> followed by <b>{{json_response.second_emotion}}</b>.
         <br>
         {% if multiple_faces == True %}
         <i>Multiple faces detected. Only showing results for one face.</i>

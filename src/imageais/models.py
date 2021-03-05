@@ -14,7 +14,7 @@ class UploadedImage(models.Model):
     def __str__(self):
         return f"{self.image} uploaded by {self.user.username}"
 
-class ImageFaceAnalyis(models.Model):
+class ImageFaceAnalysis(models.Model):
     image = models.ForeignKey(UploadedImage, on_delete=models.CASCADE, related_name="face_analysis")
     timestamp = models.DateTimeField(auto_now_add=True)
     additional_info = models.TextField(max_length=20, null=True, blank=True)
@@ -29,12 +29,12 @@ class ImageFaceAnalyis(models.Model):
     top_emotion = models.CharField(max_length=20,null=True, blank=True)
     top_emotion_confidence = models.FloatField(null=True, blank=True)
     second_emotion = models.CharField(max_length=20,null=True, blank=True)
+    second_emotion_confidence = models.FloatField(null=True, blank=True)
     age_low = models.PositiveSmallIntegerField(null=True, blank=True)
     age_high = models.PositiveSmallIntegerField(null=True, blank=True)
-    age_confidence = models.FloatField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.image} Face Analyis object ID {self.id} index {self.face_index}"
-  
+
     class Meta:
         ordering = ['face_index']

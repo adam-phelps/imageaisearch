@@ -2,7 +2,7 @@
 # Adam Phelps 1/18/21
 import logging
 from django.http import HttpResponseRedirect
-from django.http.response import JsonResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -10,34 +10,59 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.paginator import Paginator
 from .forms import FormImageUpload, UserCreationFormHidden
+from .serializers import ImageFaceAnalysisSerializer
 from .models import UploadedImage,User
-from .utils import process_image,process_image_json,process_image_emotion
+from .utils import process_image
 
 def display_img_search(request, id):
-    json_response = process_image(id)
-    try:
-        json_response['FaceDetails'][1]
-        multiple_faces = True
-    except (IndexError, TypeError):
-        multiple_faces = False
-    try:
-        emotions = process_image_emotion(id)
-        json_response['FaceDetails'][0]['Gender']['Confidence'] = round(float(json_response['FaceDetails'][0]['Gender']['Confidence']),2)
-        age = (int(json_response['FaceDetails'][0]['AgeRange']['High']) + int(json_response['FaceDetails'][0]['AgeRange']['Low']))/2
-        #json_response['Gender']['Confidence'] = round(float(json_response['Gender']['Confidence']),2)
-        #age = (int(json_response['AgeRange']['High']) + int(json_response['AgeRange']['Low']))/2
-    except:
-        age = "UNKNOWN"
-        emotions = "UNKNOWN"
-    img = UploadedImage.objects.get(id=id)
-    img_location = img.image.name
-    logging.info(f"Getting image location: {img_location}")
-    return render(request, "imageais/result.html", {"json_response": json_response,
-                                                    "multiple_faces": multiple_faces, 
-                                                    "img_location": img_location,
-                                                    "top_emotion": emotions[0],
-                                                    "second_emotion": emotions[1],
-                                                    "age": age})
+    if request.method == "POST":
+        json_response = process_image(id)
+        if len(json_response) >= 1:
+            multiple_faces = True
+        else:
+            multiple_faces = False
+        print(json_response[0])
+        try:
+            age = (int(json_response[0]['age_high']) + int(json_response[0]['age_low']))/2
+            print(age)
+        except:
+            age = "UNKNOWN"
+            emotions = "UNKNOWN"
+        img = UploadedImage.objects.get(id=id)
+        img_location = img.image.name
+        logging.info(f"Getting image location: {img_location}")
+        return redirect('index')
+        '''return render(request, "imageais/result.html", {"json_response": json_response,
+                                                        "img_location": img_location,
+                                                        "age": age,
+                                                        "multiple_faces": multiple_faces})'''
+    elif request.method == "GET":
+        img = UploadedImage.objects.get(id=id)
+        img_location = img.image.name
+        img_face_analysis = img.face_analysis.all()
+        print(img_face_analysis)
+        try:
+            serializer = ImageFaceAnalysisSerializer(img_face_analysis[0])
+            json_response = serializer.data
+        except IndexError:
+            return render(request, "imageais/result.html", {"json_response": "no_faces_detected",
+                                                            "img_location": img_location})
+        if len(img_face_analysis) >= 1:
+            multiple_faces = True
+        else:
+            multiple_faces = False
+        print(json_response)
+        try:
+            age = (int(json_response['age_high']) + int(json_response['age_low']))/2
+            print(age)
+        except:
+            age = "UNKNOWN"
+            emotions = "UNKNOWN"
+        logging.info(f"Getting image location: {img_location}")
+        return render(request, "imageais/result.html", {"json_response": json_response,
+                                                        "img_location": img_location,
+                                                        "age": age,
+                                                        "multiple_faces": multiple_faces})
 
 
 def register_view(request):
@@ -96,6 +121,7 @@ def index(request):
             new_image = UploadedImage(user=User.objects.get(username__contains=request.user),
             image=request.FILES['file'])
             new_image.save()
+            process_image(new_image.id)
             return redirect('displayimgsearch', id=new_image.id)
     else:
         form = FormImageUpload()
