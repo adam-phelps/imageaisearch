@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -26,7 +26,8 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("images", views.get_user_images, name="images"),
-    path("<int:id>", views.display_img_search, name="displayimgsearch")
+    re_path(r'(?P<id>[0-9a-f]{32})', views.display_img_search, name="displayimgsearch"),
+    re_path(r'(?P<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', views.display_img_search, name="displayimgsearch")
 ]
 
 if settings.DEBUG:

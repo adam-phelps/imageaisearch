@@ -1,6 +1,7 @@
 # IAIS Views
 # Adam Phelps 1/18/21
 import logging
+import uuid
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate, logout
@@ -32,12 +33,9 @@ def display_img_search(request, id):
         img_location = img.image.name
         logging.info(f"Getting image location: {img_location}")
         return redirect('index')
-        '''return render(request, "imageais/result.html", {"json_response": json_response,
-                                                        "img_location": img_location,
-                                                        "age": age,
-                                                        "multiple_faces": multiple_faces})'''
+
     elif request.method == "GET":
-        img = UploadedImage.objects.get(id=id)
+        img = UploadedImage.objects.get(public_id=id)
         img_location = img.image.name
         img_face_analysis = img.face_analysis.all()
         print(img_face_analysis)
@@ -119,10 +117,11 @@ def index(request):
         form = FormImageUpload(request.POST, request.FILES)
         if form.is_valid():
             new_image = UploadedImage(user=User.objects.get(username__contains=request.user),
+            public_id = uuid.uuid4(),
             image=request.FILES['file'])
             new_image.save()
             process_image(new_image.id)
-            return redirect('displayimgsearch', id=new_image.id)
+            return redirect('displayimgsearch', id=str(new_image.public_id))
     else:
         form = FormImageUpload()
     return render(request, "imageais/index.html", {"form_image_upload":form})

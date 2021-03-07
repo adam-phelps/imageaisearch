@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -9,6 +10,7 @@ class User(AbstractUser):
 class UploadedImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to='imgs/')
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

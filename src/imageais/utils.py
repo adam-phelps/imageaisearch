@@ -10,7 +10,6 @@ from django.conf import settings
 
 
 logging.basicConfig(level=logging.INFO, format=' %(asctime)s - %(levelname)s - %(message)s')
-logging.debug('Test logging')
 sts = boto3.client("sts")
 deploy_region = str(sts.meta.region_name)
 
