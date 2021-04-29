@@ -102,8 +102,12 @@ def logout_view(request):
 
 @login_required
 def get_user_images(request):
+    try:
+        userImg = User.objects.get(username__contains=request.user)
+    except User.DoesNotExist:
+        userImg = User.objects.get(username__contains="AnonymousUser")
     if request.method == "GET":
-        images = UploadedImage.objects.all().order_by("-timestamp")
+        images = UploadedImage.objects.filter(user=userImg).order_by("-timestamp")
         images_pag = Paginator(images, 10)
         try:
             page_obj = images_pag.page(request.GET['page'])
@@ -114,9 +118,14 @@ def get_user_images(request):
 
 def index(request):
     if request.method == 'POST':
+        try:
+            userImg = User.objects.get(username__contains=request.user)
+        except User.DoesNotExist:
+            userImg = User.objects.get(username__contains="AnonymousUser")
+        print(userImg)
         form = FormImageUpload(request.POST, request.FILES)
         if form.is_valid():
-            new_image = UploadedImage(user=User.objects.get(username__contains=request.user),
+            new_image = UploadedImage(user=userImg,
             public_id = uuid.uuid4(),
             image=request.FILES['file'])
             new_image.save()

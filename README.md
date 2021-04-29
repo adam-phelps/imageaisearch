@@ -25,6 +25,7 @@ Image AI Search is developed using the following key technologies:
 * Create a new python virtual environment in the root folder `python3 -m venv venv`
 * Source to the environment and pip install packages `source venv/bin/activate` `pip install -r requirements.txt`
 * Launch the docker compose file (bring up database)
+* Manually create the "AnonymousUser" as user 0 in SQL db
 
 ## Troubleshooting
 
