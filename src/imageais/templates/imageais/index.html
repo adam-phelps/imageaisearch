@@ -10,11 +10,13 @@
 <div class="container-fluid" align="center">
     <img src="{% static 'imageais/Image_AI_Search_Logo.png' %}">
     <br>
-    <h3 style="text-align:center">Upload your image below!</h3>
+    <h3 style="text-align:center">Perform a quick analysis!</h3>
     <form method = "post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form_image_upload.file }}
         <br>
+        <br>
+        <p><i>This will be a quick person detector image analysis. Register to perform more advanced analysis!</i></p>
         <button type="submit" class="btn btn-primary btn-lg"> Upload </button>
     </form>
     <br>

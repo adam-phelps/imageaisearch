@@ -13,11 +13,14 @@ logging.basicConfig(level=logging.INFO, format=' %(asctime)s - %(levelname)s - %
 sts = boto3.client("sts")
 deploy_region = str(sts.meta.region_name)
 
+def get_uploaded_image_location(id):
+    img = UploadedImage.objects.get(id=id)
+    return ('/media/imgs/' + os.path.basename(img.image.name))
 
 def process_image(id):
     img = UploadedImage.objects.get(id=id)
     img_filename = settings.MEDIA_ROOT + '/imgs/' + os.path.basename(img.image.name)
-    #aws_rek_detect_labels(img_filename, img.id)
+    aws_rek_detect_labels(img_filename, img.id)
     return aws_rek_detect_faces(img_filename, img.id)
 
 
@@ -58,3 +61,4 @@ def aws_rek_detect_labels(img_filename, img_id, s3bucket=False):
             response = client.detect_labels(Image={'Bytes': img.read()}, MaxLabels=15)
         with open(output_file, 'w') as json_out:
             json_out.write(json.dumps(response, indent=4, sort_keys=True))
+        print(response)

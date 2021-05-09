@@ -151,3 +151,6 @@ cdk.out/
 
 # Yarn error log
 yarn-error.log
+
+# Database config
+iais_db_engine.cnf

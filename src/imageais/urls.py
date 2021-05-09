@@ -26,6 +26,10 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("images", views.get_user_images, name="images"),
+    path("advanced_analysis", views.advanced_analysis, name="advanced_analysis"),
+    path("upload_image", views.upload_image, name="upload_image"),
+    path("get_image/<int:img_id>", views.get_image, name="get_image"),
+    path("request_img_analysis", views.request_img_analysis, name="request_img_analysis"),
     re_path(r'(?P<id>[0-9a-f]{32})', views.display_img_search, name="displayimgsearch"),
     re_path(r'(?P<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', views.display_img_search, name="displayimgsearch")
 ]
