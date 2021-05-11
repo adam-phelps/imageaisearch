@@ -152,11 +152,13 @@ def upload_image(request):
 def request_img_analysis(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
+        result = process_image(int(data['img_id']), data)
+        print(result)
         response = {
-            "img_analysis_id": 1001
+            "img_analysis_result": result
+
         }
-        return JsonResponse(response, status=200)
+        return JsonResponse(response, content_type="application/json")
 
 def get_image(request, img_id):
     if request.method == "GET":
