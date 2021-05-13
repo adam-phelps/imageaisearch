@@ -4,8 +4,8 @@ import time
 import boto3
 import os
 
-from .models import UploadedImage, ImageFaceAnalysis
-from .serializers import ImageFaceAnalysisSerializer
+from .models import UploadedImage, ImageFaceAnalysis, ImageObject
+from .serializers import ImageFaceAnalysisSerializer, ImageObjectSerializer
 from django.conf import settings
 
 
@@ -37,10 +37,10 @@ def process_image(id, operations="default"):
 
 
 def aws_rek_detect_faces(img_filename, img_id, s3bucket=False):
+    img_instance = UploadedImage.objects.get(id=img_id)
     json_serialized_response = []
-    if s3bucket == False:
-        img_instance = UploadedImage.objects.get(id=img_id)
-        with open(img_filename, 'rb') as img:
+    with open(img_filename, 'rb') as img:
+        if s3bucket == False:
             response = b3_rek.detect_faces(Image={'Bytes': img.read()}, Attributes=['ALL'])
             if not response == None:
                 faces_detected = len(response['FaceDetails'])
@@ -60,14 +60,25 @@ def aws_rek_detect_faces(img_filename, img_id, s3bucket=False):
                     new_face_analysis.save()
                     serializer = ImageFaceAnalysisSerializer(new_face_analysis)
                     json_serialized_response.append(serializer.data)
-        return json_serialized_response
+            return json_serialized_response
 
 
 def aws_rek_detect_labels(img_filename, img_id, s3bucket=False):
-    if s3bucket == False:
-        output_file = str(img_id)+'-detect_labels.json'
-        with open(img_filename, 'rb') as img:
+    img_instance = UploadedImage.objects.get(id=img_id)
+    json_serialized_response = []
+    with open(img_filename, 'rb') as img:
+        if s3bucket == False:
             response = b3_rek.detect_labels(Image={'Bytes': img.read()}, MaxLabels=15)
-        with open(output_file, 'w') as json_out:
-            json_out.write(json.dumps(response, indent=4, sort_keys=True))
-        print(response)
+            print(f"Detect labels: {len(response['Labels'])}")
+            if not response == None:
+                objects_detected = len(response['Labels'])
+                for object in range(0, objects_detected):
+                    new_image_object = ImageObject(
+                        image=img_instance,
+                        object_name = response['Labels'][object]['Name'],
+                        object_confidence = response['Labels'][object]['Confidence'],
+                        object_instances = len(response['Labels'][object]['Instances']))
+                    new_image_object.save()
+                    serializer = ImageObjectSerializer(new_image_object)
+                    json_serialized_response.append(serializer.data)
+                return json_serialized_response

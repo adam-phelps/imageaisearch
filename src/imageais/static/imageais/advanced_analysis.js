@@ -25,11 +25,20 @@ function submit_new_analysis(event) {
     upload_image(event);
 }
 
+function hide_upload_form() {
+    var upload_form_form = document.getElementById('upload-form-form')
+    var upload_form_div = document.getElementById('new-analysis-submit')
+    //upload_form_form.style.visibility = "hidden"
+    upload_form_form.parentNode.removeChild(upload_form_form)
+    upload_form_div.parentNode.removeChild(upload_form_div)
+}
+
 function update_uploaded_image(img_location) {
     var doc = document.querySelector('#uploaded-image')
     if (doc.childElementCount== 0) {
         var img = new Image();
         img.src = img_location;
+        img.style = "max-height:300px; max-width:300px"
         document.querySelector('#uploaded-image').appendChild(img);
         console.log(img);
     }
@@ -62,6 +71,7 @@ function upload_image(event) {
         display_image(event, result.image_id)
         request_img_analysis(event, result.image_id);
         console.log(result.image_id)
+        hide_upload_form();
     });
 }
 
@@ -90,7 +100,12 @@ function request_img_analysis(event, img_id) {
     .then(result => {
         console.log(result)
         //update_image_analysis(result)
-        display_img_analysis(result, "person")
+        if (personAnalysis == true) {
+            display_img_analysis(result, "person")
+        }
+        if (objectAnalysis == true) {
+            display_img_analysis(result, "object")
+        }
     });
 }
 
@@ -115,7 +130,7 @@ function display_img_analysis(image_analysis, image_analysis_type) {
     if (image_analysis_type == "person") {
         image_analysis = image_analysis.img_analysis_result.detect_faces_result
     }
-    else {
+    if (image_analysis_type == "object") {
         image_analysis = image_analysis.img_analysis_result.detect_labels_result
     }
     console.log(image_analysis)
