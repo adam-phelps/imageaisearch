@@ -1,0 +1,29 @@
+{% extends "imageais/layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if notification %}
+<div class="alert alert-danger" role="alert">
+    {{ notification }}  
+</div>
+{% endif %}
+<br>
+
+<div class="container-fluid" align="center" id="upload-form-div">
+    <img src="{% static 'imageais/Image_AI_Search_Logo.png' %}">
+    <h3 style="text-align:center"> Advanced Image Analysis </h3>
+    <img src="{{img_location}}" style="max-width: 300px;width:100%"/>
+    <div id="uploaded-image">
+    </div>
+    <div id="image-analysis">
+    </div>
+    <br>
+    <i>Disclaimer: There are known bias in image classification software. <a href="https://nvlpubs.nist.gov/nistpubs/ir/2019/NIST.IR.8280.pdf"> NIST Face Regonition Vendor Test (PDF)</a></i>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'imageais/advanced_image.js' %}"></script>
+{% endblock %}

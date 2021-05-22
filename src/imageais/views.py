@@ -15,7 +15,7 @@ from django.core.paginator import Paginator
 from .forms import FormImageUpload, UserCreationFormHidden
 from .serializers import ImageFaceAnalysisSerializer
 from .models import UploadedImage,User
-from .utils import process_image, get_uploaded_image_location
+from .utils import process_image, get_uploaded_image_location, retrieve_image_analysis
 
 def display_img_search(request, id):
     if request.method == "POST":
@@ -159,6 +159,32 @@ def request_img_analysis(request):
 
         }
         return JsonResponse(response, content_type="application/json")
+
+
+def get_img_analysis(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        #img_public_id = data['img_id'].replace("-")
+        result = retrieve_image_analysis(data['img_id'], data)
+        print(result)
+        response = {
+            "img_analysis_result": result
+
+        }
+        return JsonResponse(response, content_type="application/json")
+
+def display_img_analysis(request, id):
+    if request.method == "GET":
+        try:
+            img_location = get_uploaded_image_location(id, lookup_id="public")
+            return render(request, "imageais/advanced_image.html",{
+                    "img_location": img_location
+                }, status=200)
+        except Exception as e:
+            print(e)
+            return JsonResponse({
+                "img_location": "0"
+            }, status=500)
 
 def get_image(request, img_id):
     if request.method == "GET":

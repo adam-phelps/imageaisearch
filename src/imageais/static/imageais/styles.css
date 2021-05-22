@@ -1,4 +1,4 @@
-.form-check-inpu2t {
+.form-check-input {
     width: 15px;
     height: 15px;
     padding: 0;
@@ -8,4 +8,14 @@
     top: -1px;
     outline-style: dotted;
     display: block;
+}
+
+#results-table {
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+.table-th-td {
+    border: 1px solid black;
+    border-left: 2;
 }

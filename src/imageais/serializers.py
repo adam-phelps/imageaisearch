@@ -4,9 +4,9 @@ from .models import ImageFaceAnalysis, ImageObject
 class ImageFaceAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageFaceAnalysis
-        fields = '__all__'
+        fields = ('timestamp', 'face_index', 'gender', 'top_emotion', 'age_low', 'age_high')
 
 class ImageObjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageObject
-        fields = '__all__'
+        fields = ('timestamp', 'object_name', 'object_confidence','object_instances')

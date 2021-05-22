@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('#new-analysis-submit').addEventListener('click', submit_new_analysis);
+    get_img_analysis();
 });
 
 // For Django CSRF requests to not fail we must send the token with every request
@@ -21,70 +21,15 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
-function submit_new_analysis(event) {
-    upload_image(event);
-}
-
-function hide_upload_form() {
-    var upload_form_form = document.getElementById('upload-form-form')
-    var upload_form_div = document.getElementById('new-analysis-submit')
-    //upload_form_form.style.visibility = "hidden"
-    upload_form_form.parentNode.removeChild(upload_form_form)
-    upload_form_div.parentNode.removeChild(upload_form_div)
-}
-
-function update_uploaded_image(img_location) {
-    var doc = document.querySelector('#uploaded-image')
-    if (doc.childElementCount== 0) {
-        var img = new Image();
-        img.src = img_location;
-        img.style = "max-height:300px; max-width:300px"
-        document.querySelector('#uploaded-image').appendChild(img);
-        console.log(img);
-    }
-}
-
-function update_image_analysis(person_analysis) {
-    if (person_analysis != undefined) {
-        document.querySelector('#image-analysis').innerHTML = `Person analysis returned ${person_analysis}`
-    }
-}
-
-function upload_image(event) {
-
+function get_img_analysis(event) {
+    const img_id = window.location.href.split("/")[3];
     const request = new Request(
-        '/upload_image',
+        '/get_img_analysis',
         {headers: {'X-CSRFToken': csrftoken}}
     );
 
-    var formData = new FormData()
-    console.log(document.querySelector('#id_file').files[0])
-    formData.append("file", document.querySelector('#id_file').files[0])
-    console.log(formData)
-
-    fetch(request, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(result => {
-        display_image(event, result.image_id)
-        request_img_analysis(event, result.image_id);
-        console.log(result.image_id)
-        hide_upload_form();
-    });
-}
-
-function request_img_analysis(event, img_id) {
-
-    const request = new Request(
-        '/request_img_analysis',
-        {headers: {'X-CSRFToken': csrftoken}}
-    );
-
-    var personAnalysis = document.querySelector('#person-analysis-toggle').checked
-    var objectAnalysis = document.querySelector('#object-analysis-toggle').checked
-    console.log(jsonRequest)
+    var personAnalysis = true;
+    var objectAnalysis = true;
 
     var jsonRequest = {
         "person_analysis": personAnalysis,
@@ -99,30 +44,12 @@ function request_img_analysis(event, img_id) {
     .then(response => response.json())
     .then(result => {
         console.log(result)
-        //update_image_analysis(result)
         if (personAnalysis == true) {
             display_img_analysis(result, "person")
         }
         if (objectAnalysis == true) {
             display_img_analysis(result, "object")
         }
-    });
-}
-
-function display_image(event, img_id) {
-
-    const request = new Request(
-        `/get_image/${img_id}`, {
-        method: 'GET',
-        headers: {'X-CSRFToken': csrftoken},
-        }
-    );
-
-    fetch(request)
-    .then(response => response.json())
-    .then(result => {
-        console.log("The image location I recevied is...")
-        update_uploaded_image(result.img_location)
     });
 }
 

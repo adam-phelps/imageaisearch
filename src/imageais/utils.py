@@ -14,9 +14,13 @@ b3_sts = boto3.client("sts")
 deploy_region = str(b3_sts.meta.region_name)
 b3_rek = boto3.client('rekognition', region_name=deploy_region)
 
-def get_uploaded_image_location(id):
-    img = UploadedImage.objects.get(id=id)
-    return ('/media/imgs/' + os.path.basename(img.image.name))
+def get_uploaded_image_location(id, lookup_id="default"):
+    if lookup_id == "default":
+        img = UploadedImage.objects.get(id=id)
+        return ('/media/imgs/' + os.path.basename(img.image.name))
+    elif lookup_id == "public":
+        img = UploadedImage.objects.get(public_id=id)
+        return ('/media/imgs/' + os.path.basename(img.image.name))
 
 def process_image(id, operations="default"):
     img = UploadedImage.objects.get(id=id)
@@ -33,6 +37,30 @@ def process_image(id, operations="default"):
         jsonResult = {'detect_faces_result': aws_rek_detect_faces(img_filename, img.id)}
         operations_results = operation_results.update(jsonResult)
 
+    return operation_results
+
+def retrieve_image_analysis(id, operations="default"):
+    img = UploadedImage.objects.get(public_id=id)
+    img_filename = settings.MEDIA_ROOT + '/imgs/' + os.path.basename(img.image.name)
+    img_face_analysis = img.face_analysis.all()
+    faces_detected = len(img.face_analysis.all())
+    img_object_analysis = img.image_object.all()
+    objects_detected = len(img.image_object.all())
+    operation_results = {}
+    if operations != "default":
+        if operations['person_analysis'] == True:
+            person_json = []
+            for face in range(0, faces_detected):
+                serializer = ImageFaceAnalysisSerializer(img_face_analysis[face])
+                person_json.append(serializer.data)
+                print(f"On run {face} updating with Json: {person_json}")
+            operations_results = operation_results.update({'detect_faces_result': person_json})
+        if operations['object_analysis'] == True:
+            object_json = []
+            for object in range(0, objects_detected):
+                serializer = ImageObjectSerializer(img_object_analysis[object])
+                object_json.append(serializer.data)
+            operations_results = operation_results.update({'detect_labels_result':object_json})
     return operation_results
 
 
